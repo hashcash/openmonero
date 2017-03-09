@@ -18,6 +18,17 @@ main(int ac, const char* av[])
 // get command line options
 xmreg::CmdLineOptions opts {ac, av};
 
+LOG(INFO) << "Starting ..." ;
+
+mlog_configure("", true);
+mlog_set_log_level(0);
+//el::Configurations c;
+//c.setToDefault();
+//c.setGlobally(el::ConfigurationType::ToStandardOutput, std::string("true"));
+//el::Loggers::setDefaultConfigurations(c, true);
+//el::Loggers::reconfigureAllLoggers(c);
+
+
 auto help_opt         = opts.get_option<bool>("help");
 
 // if help was chosen, display help text and finish
@@ -39,8 +50,9 @@ bool do_not_relay     = *do_not_relay_opt;
 // check if config-file provided exist
 if (!boost::filesystem::exists(*config_file_opt))
 {
-    cerr << "Config file " << *config_file_opt
-         << " does not exist" << endl;
+    LOG(ERROR) << "Config file " << *config_file_opt
+               << " does not exist";
+
     return EXIT_FAILURE;
 }
 
@@ -54,9 +66,9 @@ try
 }
 catch (const std::exception& e)
 {
-    cerr << "Error reading confing file "
-         << *config_file_opt << ": "
-         << e.what() << endl;
+    LOG(ERROR) << "Error reading confing file "
+               << *config_file_opt << ": " << e.what();
+
     return EXIT_FAILURE;
 }
 
@@ -72,14 +84,23 @@ path blockchain_path = testnet
                        : path(config_json["blockchain-path"]["mainnet"].get<string>());
 
 
+
 if (!xmreg::get_blockchain_path(blockchain_path, testnet))
 {
-    cerr << "Error getting blockchain path." << endl;
+    LOG(ERROR) << "Error getting blockchain path.";
     return EXIT_FAILURE;
 }
 
-cout << "Blockchain path: " << blockchain_path.string() << endl;
 
+
+el::Loggers::removeFlag(el::LoggingFlag::HierarchicalLogging);
+//el::Loggers::removeFlag(el::LoggingFlag::CreateLoggerAutomatically);
+//el::Loggers::removeFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog);
+//el::Loggers::removeFlag(el::LoggingFlag::ColoredTerminalOutput);
+//el::Loggers::removeFlag(el::LoggingFlag::StrictLogFileSizeCheck);
+LOG(INFO) << "Starting2 ..." ;
+
+LOG(INFO) << "Blockchain path: " << blockchain_path.string() ;
 
 
 string deamon_url = testnet
@@ -134,7 +155,7 @@ else
 // with the deamon.
 if (!xmreg::CurrentBlockchainStatus::init_monero_blockchain())
 {
-    cerr << "Error accessing blockchain." << endl;
+    LOG(ERROR) << "Error accessing blockchain.";
     return EXIT_FAILURE;
 }
 
@@ -216,13 +237,13 @@ if (config_json["ssl"]["enable"])
 
     settings->set_ssl_settings(ssl_settings);
 
-    cout << "Start the service at https://localhost:" << app_port << endl;
+    LOG(INFO) << "Start the service at https://localhost:" << app_port;
 }
 else
 {
     settings->set_port(app_port);
 
-    cout << "Start the service at http://localhost:" << app_port  << endl;
+    LOG(INFO) << "Start the service at http://localhost:" << app_port;
 }
 
 
