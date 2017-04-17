@@ -13,6 +13,7 @@ list(APPEND CMAKE_MODULE_PATH
 
 include(MyUtils)
 
+set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY On)
 include(ProjectMonero)
 find_package(Monero)
 
