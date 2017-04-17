@@ -81,24 +81,16 @@ Open Monero is not as fast as MyMonero. This is because it is basic, easy to und
 Below are example and basic instructions on how to setup up and run Open Monero on Ubuntu 16.04. 
 
 
-#### Monero download and compilation
+#### Dependencies for Monero and mysql++
 
-Download and compile Monero into your home folder:
 
 ```bash
-# first install monero dependecines
+# first install monero dependecines and mysql++
 sudo apt update
 
 sudo apt install git build-essential cmake libboost-all-dev miniupnpc libunbound-dev graphviz doxygen libunwind8-dev pkg-config libssl-dev libcurl4-openssl-dev libgtest-dev
 
-# go to home folder 
-cd ~
-
-git clone https://github.com/monero-project/monero
-
-cd monero/
-
-make
+sudo apt install libmysql++-dev
 ```
 
 #### Compilation of the Open Monero (don't run it yet)
@@ -109,12 +101,6 @@ we can just do it now, to see if it compiles. But don't run it yet. It will not
 work without database, setup frontend, and synced and running monero blockchain.
 
 ```bash
-# need mysql++ libraries 
-sudo apt install libmysql++-dev
- 
-# go to home folder if still in ~/monero
-cd ~
-
 git clone https://github.com/moneroexamples/openmonero.git
 
 cd openmonero
@@ -123,9 +109,7 @@ mkdir build && cd build
 
 cmake ..
 
-# altearnatively can use cmake -DMONERO_DIR=/path/to/monero_folder .. 
-# if monero is not in ~/monero
-
+# the compilation includes downloading and compiling monero and it will take time
 make
 ```
 
