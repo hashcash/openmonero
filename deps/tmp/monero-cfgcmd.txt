@@ -1,0 +1,1 @@
+cmd='/opt/clion/bin/cmake/bin/cmake;-GCodeBlocks - Unix Makefiles;/home/mwo/openmonero/deps/src/monero'

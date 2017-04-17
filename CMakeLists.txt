@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.4)
 
 set(PROJECT_NAME
         openmonero)
@@ -8,44 +8,18 @@ project(${PROJECT_NAME})
 set(CMAKE_CXX_FLAGS
         "${CMAKE_CXX_FLAGS} -std=c++11")
 
-
-if (NOT MONERO_DIR)
-    set(MONERO_DIR ~/monero)
-endif()
-
-message(STATUS MONERO_DIR ": ${MONERO_DIR}")
-
-set(MONERO_SOURCE_DIR ${MONERO_DIR}
-        CACHE PATH "Path to the root directory for Monero")
-
-# set location of monero build tree
-set(MONERO_BUILD_DIR ${MONERO_SOURCE_DIR}/build/release/
-        CACHE PATH "Path to the build directory for Monero")
-
-set(MY_CMAKE_DIR "${CMAKE_CURRENT_LIST_DIR}/cmake"
-        CACHE PATH "The path to the cmake directory of the current project")
-
-list(APPEND CMAKE_MODULE_PATH "${MY_CMAKE_DIR}")
-
-set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${MONERO_BUILD_DIR}"
-        CACHE PATH "Add Monero directory for library searching")
+list(APPEND CMAKE_MODULE_PATH
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 include(MyUtils)
 
+include(ProjectMonero)
 find_package(Monero)
-
-include_directories(/usr/include/mysql)
-
-# include boost headers
-include_directories(${Boost_INCLUDE_DIRS})
-
-# include monero headers
-include_directories("ext/restbed/source")
-
 
 create_git_version()
 
-configure_files(${CMAKE_CURRENT_SOURCE_DIR}/config ${CMAKE_CURRENT_BINARY_DIR}/config)
+configure_files(${CMAKE_CURRENT_SOURCE_DIR}/config
+        ${CMAKE_CURRENT_BINARY_DIR}/config)
 
 # find boost
 find_package(Boost COMPONENTS
@@ -60,6 +34,11 @@ find_package(Boost COMPONENTS
         date_time
         REQUIRED)
 
+
+# include boost headers
+include_directories(${Boost_INCLUDE_DIRS})
+include_directories("/usr/include/mysql/")
+include_directories("ext/restbed/source")
 
 # add src/ subfolder
 add_subdirectory(src/)
@@ -91,7 +70,6 @@ target_link_libraries(${PROJECT_NAME}
         common
         mnemonics
         epee
-        easylogging
         mysqlpp
         mysqlclient
         ${Boost_LIBRARIES}
