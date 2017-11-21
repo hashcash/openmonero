@@ -1306,7 +1306,7 @@ YourMoneroRequests::get_tx(const shared_ptr< Session > session, const Bytes & bo
 
                     // we have to redo this info from basically from scrach.
 
-                    vector<pair<string, uint64_t>> known_outputs_keys;
+                    CurrentBlockchainStatus::known_output_vect known_outputs_keys;
 
                     if (CurrentBlockchainStatus::get_known_outputs_keys(
                             xmr_address, known_outputs_keys))

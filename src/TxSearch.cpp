@@ -296,7 +296,12 @@ TxSearch::search()
 
                         {
                             std::lock_guard<std::mutex> lck (getting_known_outputs_keys);
-                            known_outputs_keys.push_back(make_pair(out_info.pub_key, out_info.amount));
+
+                            crypto::public_key pk;
+
+                            hex_to_pod(out_info.pub_key, pk);
+
+                            known_outputs_keys.push_back(make_pair(pk, out_info.amount));
                         }
 
                     } //  for (auto& out_info: oi_identification.identified_outputs)
@@ -517,12 +522,14 @@ TxSearch::populate_known_outputs()
     {
         for (const XmrOutput& out: outs)
         {
-            known_outputs_keys.push_back(make_pair(out.out_pub_key, out.amount));
+            crypto::public_key pk;
+            hex_to_pod(out.out_pub_key, pk);
+            known_outputs_keys.push_back(make_pair(pk, out.amount));
         }
     }
 }
 
-vector<pair<string, uint64_t>>
+CurrentBlockchainStatus::known_output_vect
 TxSearch::get_known_outputs_keys()
 {
     std::lock_guard<std::mutex> lck (getting_known_outputs_keys);
@@ -537,7 +544,7 @@ TxSearch::find_txs_in_mempool(
 
     uint64_t current_height = CurrentBlockchainStatus::get_current_blockchain_height();
 
-    vector<pair<string, uint64_t>> known_outputs_keys_copy = get_known_outputs_keys();
+    CurrentBlockchainStatus::known_output_vect known_outputs_keys_copy = get_known_outputs_keys();
 
     // since find_txs_in_mempool can be called outside of this thread,
     // we need to use local connection. we cant use connection that the

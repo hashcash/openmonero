@@ -126,7 +126,7 @@ public:
      *
      */
     void identify_inputs(
-            const vector<pair<string, uint64_t>>& known_outputs_keys);
+             CurrentBlockchainStatus::known_output_vect const& known_outputs_keys);
 
 private:
 

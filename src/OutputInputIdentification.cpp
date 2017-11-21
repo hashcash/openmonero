@@ -165,7 +165,7 @@ OutputInputIdentification::identify_outputs()
 
 void
 OutputInputIdentification::identify_inputs(
-        const vector<pair<string, uint64_t>>& known_outputs_keys)
+         CurrentBlockchainStatus::known_output_vect const& known_outputs_keys)
 {
     vector<txin_to_key> input_key_imgs = xmreg::get_key_images(*tx);
 
@@ -202,9 +202,6 @@ OutputInputIdentification::identify_inputs(
             // get basic information about mixn's output
             cryptonote::output_data_t output_data = mixin_outputs.at(count);
 
-            string output_public_key_str = pod_to_hex(output_data.pubkey);
-
-            //cout << " - output_public_key_str: " << output_public_key_str << endl;
 
             // before going to the mysql, check our known outputs cash
             // if the key exists. Its much faster than going to mysql
@@ -214,9 +211,9 @@ OutputInputIdentification::identify_inputs(
             auto it =  std::find_if(
                     known_outputs_keys.begin(),
                     known_outputs_keys.end(),
-                    [&](const pair<string, uint64_t>& known_output)
+                    [&](CurrentBlockchainStatus::known_output_vect::value_type const& known_output)
                     {
-                        return output_public_key_str == known_output.first;
+                        return output_data.pubkey == known_output.first;
                     });
 
             if (it == known_outputs_keys.end())
@@ -232,7 +229,7 @@ OutputInputIdentification::identify_inputs(
             identified_inputs.push_back(input_info {
                     pod_to_hex(in_key.k_image),
                     (*it).second, // amount
-                    output_public_key_str});
+                    pod_to_hex(output_data.pubkey)});
 
             found_a_match = true;
 

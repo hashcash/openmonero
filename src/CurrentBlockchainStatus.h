@@ -33,6 +33,9 @@ static mutex getting_mempool_txs;
 */
 struct CurrentBlockchainStatus
 {
+
+    using known_output_vect = vector<pair<crypto::public_key, uint64_t>>;
+
     static string blockchain_path;
 
     static atomic<uint64_t> current_height;
@@ -211,7 +214,7 @@ struct CurrentBlockchainStatus
 
     static bool
     get_known_outputs_keys(string const& address,
-                           vector<pair<string, uint64_t>>& known_outputs_keys);
+                           known_output_vect& known_outputs_keys);
 
     static void
     clean_search_thread_map();
